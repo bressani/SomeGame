@@ -1,16 +1,53 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour
+{
 
-    // Start is called before the first frame update
-    void Start() {
-        Debug.Log("Ola mundo");
+    public Rigidbody2D playerRigidbody;
+    public int forceJump;
+    public Animator animator;
+
+    public bool isApplyingVoadora;
+
+    public Transform groundCheck;
+    public bool grounded;
+    public LayerMask whatIsGround;
+
+    public float voadoraTemp;
+    public float timeTemp;
+
+    void Start()
+    {
+        Debug.Log("Hello World!");
     }
 
-    // Update is called once per frame
-    void Update() {
-        Debug.Log("Ola mundo");
+    void Update()
+    {
+        if (Input.GetButtonDown("Jump") && grounded)
+        {
+            playerRigidbody.AddForce(new Vector2(0, forceJump));
+            isApplyingVoadora = false;
+        }
+
+        if (Input.GetButtonDown("Voadora") && grounded)
+        {
+            isApplyingVoadora = true;
+            timeTemp = 0;
+        }
+
+        grounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, whatIsGround);
+
+
+        if (isApplyingVoadora)
+        {
+            timeTemp += Time.deltaTime;
+            if (timeTemp >= voadoraTemp)
+            {
+                isApplyingVoadora = false;
+            }
+        }
+
+        animator.SetBool("jump", !grounded);
+        animator.SetBool("voadora", isApplyingVoadora);
     }
 }
